@@ -89,6 +89,7 @@ class _NewPasswordSetPageState extends State<NewPasswordSetPage> {
                           ],
                         ),
                         TextFormField(
+                          obscureText: a,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             suffixIcon: InkWell(

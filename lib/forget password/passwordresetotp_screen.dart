@@ -42,12 +42,12 @@ class _OtpScreenPageState extends State<OtpScreenPage> {
               ),
               Center(
                   child: Text(
-                "Code has been send to your email.",
+                "Code has been send to ${widget.email}",
                 style: TextStyle(fontSize: w * 0.03),
               )),
               Center(
                   child: Text(
-                "Enter the code to verify your account.",
+                "Enter the code to reset your password.",
                 style: TextStyle(fontSize: w * 0.03),
               )),
               SizedBox(

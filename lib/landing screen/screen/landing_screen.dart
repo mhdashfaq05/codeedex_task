@@ -66,7 +66,7 @@ class _LandingScreenPageState extends State<LandingScreenPage> {
                       width: w * 0.33,
                       height: h * 0.063,
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: Colors.teal,
                         borderRadius: BorderRadius.circular(w * 0.05),
                         //border: Border.all(width: 2)
                       ),

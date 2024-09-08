@@ -60,7 +60,7 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => OtpScreenPage(email: emailController.text),
+            builder: (context) => RegisterOtpScreenPage(email: emailController.text),
           ),
         );
       } else {

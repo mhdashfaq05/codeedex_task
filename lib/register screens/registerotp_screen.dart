@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 
-class OtpScreenPage extends StatefulWidget {
+class RegisterOtpScreenPage extends StatefulWidget {
   final String email; // Make this field final
 
-  const OtpScreenPage(
+  const RegisterOtpScreenPage(
       {super.key, required this.email}); // Use const constructor
 
   @override
-  State<OtpScreenPage> createState() => _OtpScreenPageState();
+  State<RegisterOtpScreenPage> createState() => _RegisterOtpScreenPageState();
 }
 
-class _OtpScreenPageState extends State<OtpScreenPage> {
+class _RegisterOtpScreenPageState extends State<RegisterOtpScreenPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController otpController = TextEditingController();
 
