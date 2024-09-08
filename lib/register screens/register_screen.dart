@@ -1,8 +1,9 @@
-import 'package:codeedex_task/otp_screen.dart';
+import 'package:codeedex_task/login%20screen/screen/login_screen.dart';
+import 'package:codeedex_task/register%20screens/registerotp_screen.dart';
 import 'package:codeedex_task/services/api_services.dart';
 import 'package:flutter/material.dart';
 
-import 'main.dart';
+import '../main.dart';
 
 class RegisterScreenPage extends StatefulWidget {
   const RegisterScreenPage({super.key});
@@ -16,7 +17,7 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmpasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
   final validatePassword =
   RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
   final validateEmail = RegExp(
@@ -29,7 +30,7 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
     }
     return null;
   }
-  String? ConfirmPasswordValidation(String value) {
+  String? confirmPasswordValidation(String value) {
     if (value.isEmpty) {
       return 'Please confirm your password';
     } else if (value != passwordController.text) {
@@ -37,18 +38,41 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
     }
     return null;
   }
-  void _submitForm() {
+  void submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // If form is valid, proceed with registration
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Registration successful!'),
-      ));
-      ApiServices().registerUser(nameController.text,emailController.text,passwordController.text,);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OtpScreenPage(),));
 
-      // You can also navigate to the next screen here
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registering...'), duration: Duration(seconds: 2)),
+      );
+
+
+      final response = await ApiServices().registerUser(
+        nameController.text,
+        emailController.text,
+        passwordController.text,
+      );
+
+      if (response['message'] == "Email already registered") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Email already registered, please login')),
+        );
+      } else if (response['status'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OtpScreenPage(email: emailController.text),
+          ),
+        );
+      } else {
+        // Show any other error messages
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response['message'] ?? 'Registration failed')),
+        );
+      }
     }
   }
+  bool a=true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,14 +87,14 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
                     "Register",
                     style: TextStyle(fontWeight: FontWeight.w700, fontSize: w * 0.06),
                   )),
-              Container(
+              SizedBox(
                 width: w * 0.9,
                 height: h*0.65,
                 child: Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Column(
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Text(
                               "Full Name",
@@ -107,7 +131,7 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
                     ),
                     Column(
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Text(
                               "E-mail",
@@ -150,7 +174,7 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
                     ),
                     Column(
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Text(
                               "Password",
@@ -159,29 +183,39 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
                           ],
                         ),
                         TextFormField(
-                          keyboardType: TextInputType.emailAddress,
+                          obscureText: a,
+                          keyboardType: TextInputType.emailAddress,decoration:InputDecoration(
+                          suffixIcon: InkWell(
+                            onTap: () {
+                              a=!a;
+                              setState(() {
+
+                              });
+                            },
+                            child: Icon(a?Icons.visibility_sharp:Icons.visibility_off_sharp),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(w * 0.02),
+                            borderSide: const BorderSide(color: Colors.grey),
+                          ),
+                          hintText: ("Enter your password"),
+                          label: const Text(""),
+                          labelStyle: const TextStyle(color: Colors.grey),
+                          border: const OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(w * 0.02)),
+                          hintStyle: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                           controller: passwordController,
                           validator: (value) => passwordValidation(value!),
                           style: const TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(w * 0.02),
-                              borderSide: const BorderSide(color: Colors.grey),
-                            ),
-                            hintText: ("Enter your password"),
-                            label: const Text(""),
-                            labelStyle: const TextStyle(color: Colors.grey),
-                            border: const OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(w * 0.02)),
-                            hintStyle: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+
                         ),
-                        Row(
+                        const Row(
                           children: [
                             Text(
                               "Must contain 8 char.",
@@ -194,7 +228,7 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
 
                     Column(
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Text(
                               "Confirm Password",
@@ -204,26 +238,37 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
                         ),
                         TextFormField(
                           keyboardType: TextInputType.emailAddress,
-                          controller: confirmpasswordController,
-                          validator: (value) => ConfirmPasswordValidation(value!),
-                          style: const TextStyle(color: Colors.black),
                           decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(w * 0.02),
-                              borderSide: const BorderSide(color: Colors.grey),
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                a=!a;
+                                setState(() {
+
+                                });
+
+                              },
+                              child: Icon(a?Icons.visibility_sharp:Icons.visibility_off_sharp),
                             ),
-                            hintText: ("Confirm your password"),
-                            label: const Text(""),
-                            labelStyle: const TextStyle(color: Colors.grey),
-                            border: const OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(w * 0.02)),
-                            hintStyle: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(w * 0.02),
+                            borderSide: const BorderSide(color: Colors.grey),
                           ),
+                          hintText: ("Confirm your password"),
+                          label: const Text(""),
+                          labelStyle: const TextStyle(color: Colors.grey),
+                          border: const OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(w * 0.02)),
+                          hintStyle: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                          controller: confirmPasswordController,
+                          validator: (value) => confirmPasswordValidation(value!),
+                          style: const TextStyle(color: Colors.black),
+
                         ),
                       ],
                     ),
@@ -233,7 +278,7 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
                       ),
                     GestureDetector(
                       onTap: () {
-                        _submitForm();
+                        submitForm();
 
                       },
                       child: Container(
@@ -244,7 +289,7 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
                             borderRadius: BorderRadius.circular(w*0.05)
                         ),
 
-                        child: Center(
+                        child: const Center(
                           child: Text("Create Account",style: TextStyle(color: Colors.white),),
                         ),
                       ),
@@ -252,6 +297,16 @@ class _RegisterScreenPageState extends State<RegisterScreenPage> {
                   ],
                 ),
               ),
+              GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreenPage(),));
+                  },
+                  child: const Row(mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Already have a account? "),
+                      Text("Login here",style: TextStyle(color: Colors.blue),),
+                    ],
+                  ))
             ],
           ),
         ),

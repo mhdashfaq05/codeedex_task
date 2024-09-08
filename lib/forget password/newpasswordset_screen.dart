@@ -1,115 +1,107 @@
-import 'package:codeedex_task/home_screen.dart';
-import 'package:codeedex_task/passwordreset_screen.dart';
 import 'package:codeedex_task/services/api_services.dart';
 import 'package:flutter/material.dart';
 
-import 'main.dart';
+import '../main.dart';
 
-class LoginScreenPage extends StatefulWidget {
-  const LoginScreenPage({super.key});
+
+class NewPasswordSetPage extends StatefulWidget {
+  String email;
+  String otp;
+   NewPasswordSetPage({super.key,required this.email,required this.otp});
 
   @override
-  State<LoginScreenPage> createState() => _LoginScreenPageState();
+  State<NewPasswordSetPage> createState() => _NewPasswordSetPageState();
 }
 
-class _LoginScreenPageState extends State<LoginScreenPage> {
+class _NewPasswordSetPageState extends State<NewPasswordSetPage> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
   final validatePassword =
   RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
-  final validateEmail = RegExp(
-      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
   String? passwordValidation(String value) {
     if (value.isEmpty) {
-      return 'Please enter your password';
+      return 'Please enter a password';
     } else if (!validatePassword.hasMatch(value)) {
-      return 'Password must contain at least 8 characters, including:\n- One uppercase letter\n- One lowercase letter\n- One number\n- One special character';
+      return 'Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.';
     }
     return null;
   }
-  String? emailValidation(String value) {
+  String? confirmPasswordValidation(String value) {
     if (value.isEmpty) {
-      return 'Please enter your email';
-    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return 'Please enter a valid email';
+      return 'Please confirm your password';
+    } else if (value != newPasswordController.text) {
+      return 'Passwords do not match';
     }
     return null;
   }
+  void submitPasswordReset() {
+    if (_formKey.currentState!.validate()) {
+      ApiServices().resetPassword(
+        context,
+        newPasswordController.text,
+        confirmPasswordController.text,
+        widget.email,
+        widget.otp
 
-
+      );
+    }
+  }
+  bool a=true;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          // title: Center(child: Text("Login Screen")),
-          ),
+    return  Scaffold(
+      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Form(
-          key: _formKey,
+          key:_formKey,
           child: Column(
             children: [
               Center(
                   child: Text(
-                "Login",
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: w * 0.06),
-              )),
-              Container(
+                    "Create New Password",
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: w * 0.06),
+                  )),
+              Center(
+                  child: Text(
+                    "Please enter and confirm your new password.",
+                    style: TextStyle( fontSize: w * 0.03),
+                  )),
+              Center(
+                  child: Text(
+                    "You will need to login after you reset.",
+                    style: TextStyle( fontSize: w * 0.03),
+                  )),
+              SizedBox(
                 width: w * 0.9,
-                height: h*0.5,
+                height: h*0.65,
                 child: Column( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+
                     Column(
                       children: [
-                        Row(
+                        const Row(
                           children: [
                             Text(
-                              "E-mail",
+                              "New Password",
                               style: TextStyle(fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
                         TextFormField(
                           keyboardType: TextInputType.emailAddress,
-                          controller: emailController,
-                          validator: (value) => emailValidation(value!),
-                          style: const TextStyle(color: Colors.black),
                           decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(w * 0.02),
-                              borderSide: const BorderSide(color: Colors.grey),
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                a=!a;
+                                setState(() {
+
+                                });
+
+                              },
+                              child: Icon(a?Icons.visibility_sharp:Icons.visibility_off_sharp),
                             ),
-                           hintText: ("Enter your email"),
-                            label: const Text(""),
-                            labelStyle: const TextStyle(color: Colors.grey),
-                            border: const OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(w * 0.02)),
-                            hintStyle: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Password",
-                              style: TextStyle(fontWeight: FontWeight.w400),
-                            ),
-                          ],
-                        ),
-                        TextFormField(
-                          keyboardType: TextInputType.emailAddress,
-                          controller: passwordController,
-                          validator: (value) => passwordValidation(value!),
-                          style: const TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
+
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(w * 0.02),
                               borderSide: const BorderSide(color: Colors.grey),
@@ -126,33 +118,87 @@ class _LoginScreenPageState extends State<LoginScreenPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          controller: newPasswordController,
+                          validator: (value) => passwordValidation(value!),
+                          style: const TextStyle(color: Colors.black),
+
+                        ),
+                        const Row(
+                          children: [
+                            Text(
+                              "Must contain 8 char.",
+                              style: TextStyle(fontWeight: FontWeight.w400,color: Colors.grey),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                    Row( mainAxisAlignment: MainAxisAlignment.end,
+
+                    Column(
                       children: [
-                        GestureDetector(
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => PasswordResetScreen(),));
-                            },
-                            child: Text("Forgot Password?",style: TextStyle(color: Colors.blue,decoration: TextDecoration.underline,decorationColor: Colors.blue),)),
+                        const Row(
+                          children: [
+                            Text(
+                              "Confirm Password",
+                              style: TextStyle(fontWeight: FontWeight.w400),
+                            ),
+                          ],
+                        ),
+                        TextFormField(
+                          obscureText: a,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                a=!a;
+                                setState(() {
+
+                                });
+
+                              },
+                              child: Icon(a?Icons.visibility_sharp:Icons.visibility_off_sharp),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(w * 0.02),
+                              borderSide: const BorderSide(color: Colors.grey),
+                            ),
+                            hintText: ("Confirm your password"),
+                            label: const Text(""),
+                            labelStyle: const TextStyle(color: Colors.grey),
+                            border: const OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(w * 0.02)),
+                            hintStyle: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          controller: confirmPasswordController,
+                          validator: (value) => confirmPasswordValidation(value!),
+                          style: const TextStyle(color: Colors.black),
+
+                        ),
                       ],
                     ),
 
+                    SizedBox(
+                      height: h*0.05,
+                    ),
                     GestureDetector(
                       onTap: () {
-                        ApiServices().loginUser(emailController.text, passwordController.text,context);
-                      },
+                        submitPasswordReset();
+                        },
                       child: Container(
                         width: w*0.75,
                         height: h*0.05,
                         decoration: BoxDecoration(
-                          color: Colors.teal,
-                          borderRadius: BorderRadius.circular(w*0.05)
+                            color: Colors.teal,
+                            borderRadius: BorderRadius.circular(w*0.05)
                         ),
 
-                        child: Center(
-                          child: Text("Login",style: TextStyle(color: Colors.white),),
+                        child: const Center(
+                          child: Text("Reset Password",style: TextStyle(color: Colors.white),),
                         ),
                       ),
                     )

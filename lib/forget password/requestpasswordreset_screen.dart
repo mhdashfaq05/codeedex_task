@@ -1,5 +1,5 @@
 import 'package:codeedex_task/main.dart';
-import 'package:codeedex_task/passwordotp_screen.dart';
+import 'package:codeedex_task/forget%20password/passwordresetotp_screen.dart';
 import 'package:codeedex_task/services/api_services.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +37,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
               SizedBox(
                 height: h * 0.05,
               ),
-              Text(
+              const Text(
                 'Enter your valid email to reset your password',
                 style: TextStyle(fontSize: 18),
                 textAlign: TextAlign.center,
@@ -45,7 +45,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
               SizedBox(height: h * 0.1),
               TextFormField(
                 controller: emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -57,13 +57,13 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               GestureDetector(
 
                 onTap: () {
                   handlePasswordReset();
                 },
-                child: Text(
+                child: const Text(
                   'Request Password Reset',
                   style: TextStyle(
                      // decoration: TextDecoration.underline,
